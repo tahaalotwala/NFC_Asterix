@@ -1,0 +1,45 @@
+<html>
+<head>
+   <style>
+      /* set the box for the slides */
+      .parent { height: 300px; width: 600px; overflow: hidden;}
+      /* set height and width for slide elements */
+      .element {float: left; height: 500px; width: 716px; backgroundcolor: grey;}
+      /* set the width of the slides div and animation. */
+      .slides { width: calc(716px * 4); animation: slideShow 10s ease infinite;}
+      /* changing the font size and text color for every slide */
+      .element:nth-child(1) {font-size: 2rem; color: blue;}
+      .element:nth-child(2) {font-size: 3rem; color: black;}
+      .element:nth-child(3) {font-size: 4rem; color: green;}
+      .element:nth-child(4) {font-size: 5rem; color: pink;}
+      /* creating the animation for the slideShow */
+      /* for more slides, users can take percentages accordingly. */
+      @keyframes slideShow {
+         20% {margin-left: 0px;}
+         40% {margin-left: calc(-716px * 1);}
+         60% {margin-left: calc(-716px * 2);}
+         80% {margin-left: calc(-716px * 3);}
+      }
+   </style>
+</head>
+<body>
+   <div text-align=center>
+      <h1> <i> " <u>OUR SPONSORS</u> " </i></h1></div>    
+   <div class = "parent">
+      <div class = "slides">
+         <div class = "element">
+            <h3 class = "content"> <img src="./sponsor.jpeg" </h3>
+         </div>
+         <div class = "element">
+            <h3 class = "content"> <img src="./sponsor2.png"> </h3>
+         </div>
+         <div class = "element">
+            <h3 class = "content"> <img src="sponsor3.png" </h3>
+         </div>
+         <div class = "element">
+            <h3 class = "content"> <img src="sponsor4.png" </h3>
+         </div>
+      </div>
+   </div>
+</body>
+</html>

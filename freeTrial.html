@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Suggestion App</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Bootstrap JavaScript dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        /* Add your custom CSS here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: #007BFF;
+        }
+
+        button[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        #collegeResults {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            display: none;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 5px 0;
+        }
+
+        #collegeResults p {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        #collegeResults.active {
+            display: block;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container" class="container mt-5">
+        <h1 class="text-center">College Suggestion App</h1>
+        <form id="collegeForm">
+            <div class="form-group">
+                <label for="location">Your Location:</label>
+                <input type="text" class="form-control" id="location" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cgpa">Your CGPA:</label>
+                <input type="number" class="form-control" id="cgpa" step="0.01" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Find Colleges</button>
+        </form>
+
+        <div id="collegeResults" class="mt-4">
+            <!-- College suggestions will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Sample college data
+        const collegeData = [
+            { name: "Harvard University", location: "Cambridge", minCGPA: 3.8 },
+            { name: "Stanford University", location: "Stanford", minCGPA: 3.7 },
+            { name: "Massachusetts Institute of Technology (MIT)", location: "Cambridge", minCGPA: 3.9 },
+            { name: "University of California, Berkeley", location: "Berkeley", minCGPA: 3.6 },
+            { name: "Yale University", location: "New Haven", minCGPA: 3.8 },
+            { name: "Princeton University", location: "Princeton", minCGPA: 3.8 },
+            { name: "University of Texas at Austin", location: "Austin", minCGPA: 3.5 },
+            { name: "Columbia University", location: "New York", minCGPA: 3.7 },
+            { name: "University of Chicago", location: "Chicago", minCGPA: 3.6 },
+            { name: "California Institute of Technology (Caltech)", location: "Pasadena", minCGPA: 3.9 },
+            { name: "University of Michigan, Ann Arbor", location: "Ann Arbor", minCGPA: 3.5 },
+            { name: "Cornell University", location: "Ithaca", minCGPA: 3.7 },
+            { name: "University of Florida", location: "Gainesville", minCGPA: 3.4 },
+            { name: "University of Washington", location: "Seattle", minCGPA: 3.6 },
+            { name: "University of Virginia", location: "Charlottesville", minCGPA: 3.6 },
+            { name: "University of California, Los Angeles (UCLA)", location: "Los Angeles", minCGPA: 3.6 },
+            { name: "University of North Carolina at Chapel Hill", location: "Chapel Hill", minCGPA: 3.5 },
+            { name: "Duke University", location: "Durham", minCGPA: 3.7 },
+            { name: "University of Pennsylvania", location: "Philadelphia", minCGPA: 3.7 },
+            { name: "Brown University", location: "Providence", minCGPA: 3.7 },
+            { name: "Northwestern University", location: "Evanston", minCGPA: 3.6 },
+            { name: "University of Notre Dame", location: "Notre Dame", minCGPA: 3.7 },
+            { name: "Georgetown University", location: "Washington, D.C.", minCGPA: 3.6 },
+            { name: "University of California, San Diego (UCSD)", location: "La Jolla", minCGPA: 3.6 },
+            { name: "University of Wisconsin-Madison", location: "Madison", minCGPA: 3.5 },
+            { name: "University of Illinois Urbana-Champaign", location: "Champaign", minCGPA: 3.6 },
+            { name: "University of California, Irvine (UCI)", location: "Irvine", minCGPA: 3.6 },
+            { name: "University of Minnesota, Twin Cities", location: "Minneapolis", minCGPA: 3.6 },
+            { name: "University of California, Santa Barbara (UCSB)", location: "Santa Barbara", minCGPA: 3.5 },
+            { name: "University of Maryland, College Park", location: "College Park", minCGPA: 3.5 },
+            { name: "Rice University", location: "Houston", minCGPA: 3.7 },
+            { name: "Emory University", location: "Atlanta", minCGPA: 3.6 },
+            { name: "University of Southern California (USC)", location: "Los Angeles", minCGPA: 3.6 },
+            { name: "Vanderbilt University", location: "Nashville", minCGPA: 3.6 },
+            { name: "University of California, Davis (UC Davis)", location: "Davis", minCGPA: 3.5 },
+            { name: "University of Pittsburgh", location: "Pittsburgh", minCGPA: 3.5 },
+            { name: "University of Rochester", location: "Rochester", minCGPA: 3.6 },
+            { name: "Boston University", location: "Boston", minCGPA: 3.6 },
+            { name: "New York University (NYU)", location: "New York", minCGPA: 3.6 },
+            { name: "University of Miami", location: "Coral Gables", minCGPA: 3.5 },
+            { name: "University of California, Santa Cruz (UCSC)", location: "Santa Cruz", minCGPA: 3.4 },
+            { name: "University of Iowa", location: "Iowa City", minCGPA: 3.4 },
+            { name: "University of Connecticut", location: "Storrs", minCGPA: 3.4 },
+            { name: "University of Delaware", location: "Newark", minCGPA: 3.4 },
+            { name: "Case Western Reserve University", location: "Cleveland", minCGPA: 3.5 },
+            { name: "University of Georgia", location: "Athens", minCGPA: 3.5 },
+            { name: "University of Tennessee, Knoxville", location: "Knoxville", minCGPA: 3.4 },
+            { name: "University of Colorado Boulder", location: "Boulder", minCGPA: 3.5 },
+            { name: "University of Arizona", location: "Tucson", minCGPA: 3.4 },
+            { name: "University of Oregon", location: "Eugene", minCGPA: 3.4 },
+            { name: "University of Utah", location: "Salt Lake City", minCGPA: 3.4 },
+            { name: "Syracuse University", location: "Syracuse", minCGPA: 3.5 },
+            { name: "University of Kentucky", location: "Lexington", minCGPA: 3.4 },
+            { name: "University of Oklahoma", location: "Norman", minCGPA: 3.4 },
+            { name: "George Washington University", location: "Washington, D.C.", minCGPA: 3.6 },
+            { name: "University of Cincinnati", location: "Cincinnati", minCGPA: 3.4 },
+            { name: "University of Kansas", location: "Lawrence", minCGPA: 3.4 },
+            { name: "University of Nebraska-Lincoln", location: "Lincoln", minCGPA: 3.4 },
+            { name: "Rutgers, The State University of New Jersey", location: "New Brunswick", minCGPA: 3.5 },
+            { name: "Indiana University Bloomington", location: "Bloomington", minCGPA: 3.5 },
+            { name: "Michigan State University", location: "East Lansing", minCGPA: 3.5 },
+            { name: "Ohio State University", location: "Columbus", minCGPA: 3.5 },
+            { name: "Texas A&M University", location: "College Station", minCGPA: 3.4 },
+            { name: "University of New Mexico", location: "Albuquerque", minCGPA: 3.4 },
+            { name: "University of Arkansas", location: "Fayetteville", minCGPA: 3.4 },
+            { name: "University of Hawaii at Manoa", location: "Honolulu", minCGPA: 3.4 },
+            { name: "University of Mississippi", location: "University", minCGPA: 3.4 },
+            { name: "Louisiana State University (LSU)", location: "Baton Rouge", minCGPA: 3.4 },
+            { name: "Florida State University", location: "Tallahassee", minCGPA: 3.4 },
+            { name: "University of South Carolina", location: "Columbia", minCGPA: 3.4 },
+            { name: "University of Alabama", location: "Tuscaloosa", minCGPA: 3.4 },
+            { name: "Oklahoma State University", location: "Stillwater", minCGPA: 3.4 },
+            { name: "Kansas State University", location: "Manhattan", minCGPA: 3.4 },
+            { name: "University of Nevada, Las Vegas (UNLV)", location: "Las Vegas", minCGPA: 3.4 },
+            { name: "Utah State University", location: "Logan", minCGPA: 3.4 },
+            { name: "University of Idaho", location: "Moscow", minCGPA: 3.4 },
+            { name: "Montana State University", location: "Bozeman", minCGPA: 3.4 },
+            { name: "University of North Dakota", location: "Grand Forks", minCGPA: 3.4 },
+            { name: "University of Wyoming", location: "Laramie", minCGPA: 3.4 },
+            { name: "New Mexico State University", location: "Las Cruces", minCGPA: 3.4 },
+            { name: "University of Alaska Fairbanks", location: "Fairbanks", minCGPA: 3.4 },
+            { name: "Hawaii Pacific University", location: "Honolulu", minCGPA: 3.0 },
+        ];
+
+        // Function to clear input fields and results
+        function clearData() {
+            document.getElementById('location').value = '';
+            document.getElementById('cgpa').value = '';
+            document.getElementById('collegeResults').innerHTML = '';
+            document.getElementById('collegeResults').classList.remove('active');
+        }
+
+        // Clear data on page reload
+        window.addEventListener('load', clearData);
+
+        document.getElementById('collegeForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Get user inputs
+            const location = document.getElementById('location').value;
+            const cgpa = parseFloat(document.getElementById('cgpa').value);
+
+            // Filter colleges based on location and CGPA
+            const filteredColleges = collegeData.filter(college => {
+                return college.location === location && cgpa >= college.minCGPA;
+            });
+
+            // Display the suggestions
+            const collegeResults = document.getElementById('collegeResults');
+            if (filteredColleges.length > 0) {
+                const collegeList = filteredColleges.map(college => college.name).join(', ');
+                collegeResults.innerHTML = `<p>Suggested colleges for Location: ${location}, CGPA: ${cgpa}:</p>
+                                                <ul>
+                                                    <li>${collegeList}</li>
+                                                </ul>`;
+                collegeResults.classList.add('active');
+            } else {
+                collegeResults.innerHTML = `<p>No colleges found for Location: ${location}, CGPA: ${cgpa}</p>`;
+                collegeResults.classList.add('active');
+            }
+        });
+    </script>
+</body>
+
+</html>
